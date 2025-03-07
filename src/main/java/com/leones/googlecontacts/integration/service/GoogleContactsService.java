@@ -3,6 +3,7 @@ package com.leones.googlecontacts.integration.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -79,7 +80,7 @@ public class GoogleContactsService {
         ).setApplicationName("Google Contacts App").build();
     }
 
-    public void updateContact(String resourceName, String familyName, String email, String phoneNumber) throws IOException {
+    public void updateContact(String resourceName, String familyName, List<String> emails, List<String> phones) throws IOException {
         PeopleService peopleService = createPeopleService();
         Person existingContact = peopleService.people().get(resourceName)
                 .setPersonFields("names,emailAddresses,phoneNumbers")
@@ -88,8 +89,8 @@ public class GoogleContactsService {
         Person updatedContact = new Person()
                 .setEtag(existingContact.getEtag())
                 .setNames(List.of(new Name().setGivenName(null).setFamilyName(familyName)))
-                .setEmailAddresses(email != null && !email.isEmpty() ? List.of(new EmailAddress().setValue(email)) : null)
-                .setPhoneNumbers(phoneNumber != null && !phoneNumber.isEmpty() ? List.of(new PhoneNumber().setValue(phoneNumber)) : null);
+                .setEmailAddresses(emails != null ? emails.stream().map(email -> new EmailAddress().setValue(email)).collect(Collectors.toList()) : null)
+                .setPhoneNumbers(phones != null ? phones.stream().map(phone -> new PhoneNumber().setValue(phone)).collect(Collectors.toList()) : null);
 
         peopleService.people().updateContact(resourceName, updatedContact)
                 .setUpdatePersonFields("names,emailAddresses,phoneNumbers")

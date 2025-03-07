@@ -2,6 +2,7 @@ package com.leones.googlecontacts.integration.controller;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -34,15 +35,15 @@ public class GoogleContactsController {
         return googleContactsService.createContact(principal.getName(), contactData);
     }
 
-     @PostMapping("/update")
+    @PostMapping("/update")
     public String updateContact(
             @RequestParam String resourceName,
             @RequestParam String familyName,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String phoneNumber) {
+            @RequestParam(required = false) List<String> emails,
+            @RequestParam(required = false) List<String> phones) {
 
         try {
-            googleContactsService.updateContact(resourceName, familyName, email, phoneNumber);
+            googleContactsService.updateContact(resourceName, familyName, emails, phones);
             System.out.println("Contact updated: " + resourceName);
             return "Contact updated successfully";
         } catch (IOException e) {
@@ -60,5 +61,4 @@ public class GoogleContactsController {
             return "error";
         }
     }
-    
 }
