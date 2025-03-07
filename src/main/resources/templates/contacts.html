@@ -617,8 +617,8 @@
                         
                         data.connections.forEach((contact, index) => {
                             let name = contact.names ? contact.names[0].displayName : 'No Name';
-                            let phone = contact.phoneNumbers && contact.phoneNumbers.length > 0 ? contact.phoneNumbers[0].value : 'No Phone';
-                            let email = contact.emailAddresses && contact.emailAddresses.length > 0 ? contact.emailAddresses[0].value : 'No Email';
+                            let phones = contact.phoneNumbers ? contact.phoneNumbers.map(p => p.value).join(', ') : 'No Phone';
+                            let emails = contact.emailAddresses ? contact.emailAddresses.map(e => e.value).join(', ') : 'No Email';
                             let resourceName = contact.resourceName || '';
 
                             // Generate a consistent color based on the name
@@ -636,12 +636,12 @@
                                     </div>
                                     <div class="contact-details">
                                         <p class="contact-name">${name}</p>
-                                        <small class="contact-info"><i class="ph ph-phone"></i>${phone}</small>
-                                        <small class="contact-info"><i class="ph ph-envelope"></i>${email}</small>
+                                        <small class="contact-info"><i class="ph ph-phone"></i>${phones}</small>
+                                        <small class="contact-info"><i class="ph ph-envelope"></i>${emails}</small>
                                     </div>
                                 </div>
                                 <div class="action-buttons">
-                                    <button class="btn-action btn-edit" onclick="openEditModal('${resourceName}', '${name}', '${phone}', '${email}')">
+                                    <button class="btn-action btn-edit" onclick="openEditModal('${resourceName}', '${name}', '${phones}', '${emails}')">
                                         <i class="ph ph-pencil"></i>
                                     </button>
                                     <button class="btn-action btn-delete" onclick="deleteContact('${resourceName}')">
@@ -681,14 +681,14 @@
             new bootstrap.Modal(document.getElementById('contactModal')).show();
         }
 
-        function openEditModal(resourceName, name, phone, email) {
+        function openEditModal(resourceName, name, phones, emails) {
             document.getElementById("contactModalLabel").textContent = "Edit Contact";
             document.getElementById("contact-resourceName").value = resourceName;
             document.getElementById("contact-name").value = name;
 
             const phoneContainer = document.getElementById("phone-container");
             phoneContainer.innerHTML = "";
-            phone.split(',').forEach(phone => {
+            phones.split(', ').forEach(phone => {
                 const input = document.createElement('input');
                 input.type = "text";
                 input.className = "form-control mb-2";
@@ -698,7 +698,7 @@
 
             const emailContainer = document.getElementById("email-container");
             emailContainer.innerHTML = "";
-            email.split(',').forEach(email => {
+            emails.split(', ').forEach(email => {
                 const input = document.createElement('input');
                 input.type = "email";
                 input.className = "form-control mb-2";
